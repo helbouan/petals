@@ -50,6 +50,28 @@ class _AutoDistributedBase:
 
         return proper_cls.from_pretrained(model_name_or_path, *args, **kwargs)
 
+class _ORTDistributedBase:
+    _mapping_field = None  # Should be defined in child classes
+
+    @classmethod
+    def from_pretrained(cls, model_name_or_path: Union[str, os.PathLike, None], *args, **kwargs) -> PretrainedConfig:
+        if (
+            always_needs_auth(model_name_or_path)
+            and kwargs.get("token") is None
+            and kwargs.get("use_auth_token") is None
+        ):
+            kwargs["use_auth_token"] = True
+
+        config = AutoConfig.from_pretrained(model_name_or_path, *args, **kwargs)
+        if config.model_type not in _CLASS_MAPPING:
+            raise ValueError(f"Petals does not support model type {config.model_type}")
+
+        proper_cls = getattr(_CLASS_MAPPING[config.model_type], cls._mapping_field)
+        if proper_cls is None:
+            raise ValueError(f"Petals does not have {cls.__name__} for model type {config.model_type}")
+
+        return proper_cls.from_pretrained(model_name_or_path, *args, **kwargs)
+
 
 class DefaultRevisionMixin:
     """
@@ -92,3 +114,9 @@ class AutoDistributedModelForCausalLM(DefaultRevisionMixin, _AutoDistributedBase
 
 class AutoDistributedModelForSequenceClassification(DefaultRevisionMixin, _AutoDistributedBase):
     _mapping_field = "model_for_sequence_classification"
+
+class ORTDistributedModel(DefaultRevisionMixin, _AutoDistributedBase):
+    _mapping_field = "model"
+
+class ORTDistributedModelForCausalLM(DefaultRevisionMixin, _AutoDistributedBase):
+    _mapping_field = "model_for_causal_lm"
