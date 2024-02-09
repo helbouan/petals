@@ -42,6 +42,7 @@ def load_pretrained_block(
     cache_dir: Optional[str] = None,
     max_disk_space: Optional[int] = None,
 ) -> nn.Module:
+    print(config)
     if config is None:
         config = AutoDistributedConfig.from_pretrained(model_name, use_auth_token=token)
     if cache_dir is None:
@@ -54,6 +55,7 @@ def load_pretrained_block(
         block = config.block_class(config)
 
     block_prefix = f"{config.block_prefix}.{block_index}."
+    print(block_prefix)
     state_dict = _load_state_dict_from_repo(
         model_name,
         block_prefix,
@@ -224,5 +226,8 @@ def _load_state_dict_from_local_file(path: str, *, block_prefix: Optional[str] =
     if path.endswith(".safetensors"):
         with safetensors.safe_open(path, framework="pt", device="cpu") as f:
             return {key: f.get_tensor(key) for key in f.keys() if block_prefix is None or key.startswith(block_prefix)}
+    
+    if path.endswith(".onnx"):
+        return {}
 
     raise ValueError(f"Unknown weight format: {path}")
