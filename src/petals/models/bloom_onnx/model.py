@@ -50,6 +50,7 @@ class DistributedBloomONNXModel(FromPretrainedMixin, PTuneMixin, ORTModel):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
     ):
+        print("model/Forward!")
         if input_ids is not None and inputs_embeds is not None:
             raise ValueError("You cannot specify both input_ids and inputs_embeds at the same time")
         elif input_ids is not None:
@@ -113,6 +114,7 @@ class DistributedBloomONNXForCausalLM(FromPretrainedMixin, RemoteGenerationMixin
     config_class = DistributedBloomONNXConfig
 
     def __init__(self, config: DistributedBloomONNXConfig):
+        print("Init model for causal LM")
         BloomPreTrainedModel.__init__(self, config)
         self.transformer = DistributedBloomONNXModel(config)
         self.lm_head = LMHead(config)

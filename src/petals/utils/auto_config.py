@@ -111,12 +111,12 @@ class AutoDistributedModel(DefaultRevisionMixin, _AutoDistributedBase):
 class AutoDistributedModelForCausalLM(DefaultRevisionMixin, _AutoDistributedBase):
     _mapping_field = "model_for_causal_lm"
 
-
 class AutoDistributedModelForSequenceClassification(DefaultRevisionMixin, _AutoDistributedBase):
     _mapping_field = "model_for_sequence_classification"
 
-class ORTDistributedModel(DefaultRevisionMixin, _AutoDistributedBase):
+
+class ORTDistributedModel(DefaultRevisionMixin, _ORTDistributedBase):
     _mapping_field = "model"
 
-class ORTDistributedModelForCausalLM(DefaultRevisionMixin, _AutoDistributedBase):
+class ORTDistributedModelForCausalLM(DefaultRevisionMixin, _ORTDistributedBase):
     _mapping_field = "model_for_causal_lm"
