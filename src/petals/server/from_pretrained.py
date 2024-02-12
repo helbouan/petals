@@ -243,7 +243,7 @@ def _load_state_dict_from_local_file(path: str, *, block_prefix: Optional[str] =
     
     if path.endswith(".onnx"):
         onnx_model = onnx.load(path)
-        initializers = onnx_model.initializers
+        initializers = onnx_model.graph.initializers
         return {initializer.name: torch.tensor(onnx.numpy_helper.to_array(initializer)) for initializer in initializers}
 
     raise ValueError(f"Unknown weight format: {path}")
