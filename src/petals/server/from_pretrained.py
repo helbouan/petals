@@ -56,6 +56,7 @@ def load_pretrained_block(
 
     block_prefix = f"{config.block_prefix}.{block_index}."
     print(block_prefix)
+
     state_dict = _load_state_dict_from_repo(
         model_name,
         block_prefix,
@@ -235,15 +236,27 @@ def _load_state_dict_from_repo_file(
 
 def _load_state_dict_from_local_file(path: str, *, block_prefix: Optional[str] = None) -> StateDict:
     if path.endswith(".bin"):
-        return torch.load(path, map_location="cpu")
+        state_dict = torch.load(path, map_location="cpu")
+        print(state_dict)
+        return state_dict
 
     if path.endswith(".safetensors"):
         with safetensors.safe_open(path, framework="pt", device="cpu") as f:
-            return {key: f.get_tensor(key) for key in f.keys() if block_prefix is None or key.startswith(block_prefix)}
+            state_dict = {key: f.get_tensor(key) for key in f.keys() if block_prefix is None or key.startswith(block_prefix)}
+            print(state_dict)
+            return state_dict
     
     if path.endswith(".onnx"):
         onnx_model = onnx.load(path)
         initializers = onnx_model.graph.initializer
-        return {initializer.name: torch.tensor(onnx.numpy_helper.to_array(initializer)) for initializer in initializers}
+        state_dict = {}
+        for initializer in initializers:
+            key = initializer.name
+            if key.startswith("transformer."):
+                key = key[12:]
+            value = torch.tensor(onnx.numpy_helper.to_array(initializer))
+            state_dict[key] = value
+        print(state_dict)
+        return state_dict
 
     raise ValueError(f"Unknown weight format: {path}")
