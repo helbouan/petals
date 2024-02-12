@@ -66,6 +66,8 @@ def load_pretrained_block(
 
     # dummy load, check that keys match
     report = block.load_state_dict(state_dict, strict=False)
+    print(block)
+    print(report)
     assert not report.missing_keys, f"Some block weights are missing: {report.missing_keys}"
 
     for param_name, _ in block.named_parameters():
@@ -195,7 +197,6 @@ def _load_state_dict_from_repo_file(
     while True:
         try:
             with allow_cache_writes(cache_dir):
-                print(model_name, filename)
                 url = hf_hub_url(model_name, filename, revision=revision)
                 file_size = get_hf_file_metadata(url, token=token).size
                 if file_size is not None:
@@ -224,7 +225,6 @@ def _load_state_dict_from_repo_file(
                     )
                     if path_data is None:
                         raise RuntimeError(f"File {filename_data} does not exist in repo {model_name}")
-                print(path)
                 if path is None:
                     raise RuntimeError(f"File {filename} does not exist in repo {model_name}")
                 return _load_state_dict_from_local_file(path, block_prefix=block_prefix)
