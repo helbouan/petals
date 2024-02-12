@@ -43,7 +43,6 @@ def load_pretrained_block(
     cache_dir: Optional[str] = None,
     max_disk_space: Optional[int] = None,
 ) -> nn.Module:
-    print(config)
     if config is None:
         config = AutoDistributedConfig.from_pretrained(model_name, use_auth_token=token)
     if cache_dir is None:
@@ -212,6 +211,19 @@ def _load_state_dict_from_repo_file(
                     cache_dir=cache_dir,
                     local_files_only=False,
                 )
+                if path.endswith(".onnx"):
+                    # The model is in ONNX format. The "model.onnx_data" file is also needed:
+                    filename_data = filename + "_data"
+                    path_data = get_file_from_repo(
+                        model_name,
+                        filename_data,
+                        revision=revision,
+                        use_auth_token=token,
+                        cache_dir=cache_dir,
+                        local_files_only=False,
+                    )
+                    if path_data is None:
+                        raise RuntimeError(f"File {filename_data} does not exist in repo {model_name}")
                 print(path)
                 if path is None:
                     raise RuntimeError(f"File {filename} does not exist in repo {model_name}")
