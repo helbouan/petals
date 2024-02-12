@@ -115,6 +115,9 @@ class AutoDistributedModelForSequenceClassification(DefaultRevisionMixin, _AutoD
     _mapping_field = "model_for_sequence_classification"
 
 
+class ORTDistributedConfig(DefaultRevisionMixin, _ORTDistributedBase):
+    _mapping_field = "config"
+
 class ORTDistributedModel(DefaultRevisionMixin, _ORTDistributedBase):
     _mapping_field = "model"
 

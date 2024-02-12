@@ -11,6 +11,7 @@ import time
 from contextlib import suppress
 from typing import Dict, Optional, Union
 
+import onnx
 import safetensors
 import torch
 import torch.nn as nn
@@ -55,7 +56,6 @@ def load_pretrained_block(
         block = config.block_class(config)
 
     block_prefix = f"{config.block_prefix}.{block_index}."
-    print(block_prefix)
     state_dict = _load_state_dict_from_repo(
         model_name,
         block_prefix,
@@ -228,6 +228,8 @@ def _load_state_dict_from_local_file(path: str, *, block_prefix: Optional[str] =
             return {key: f.get_tensor(key) for key in f.keys() if block_prefix is None or key.startswith(block_prefix)}
     
     if path.endswith(".onnx"):
-        return {}
+        onnx_model = onnx.load(path)
+        initializers = onnx_model.initializers
+        return {initializer.name: torch.tensor(onnx.numpy_helper.to_array(initializer)) for initializer in initializers}
 
     raise ValueError(f"Unknown weight format: {path}")

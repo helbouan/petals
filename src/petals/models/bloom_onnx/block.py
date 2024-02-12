@@ -21,7 +21,6 @@ class WrappedBloomBlock(BloomBlock):
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         **kwargs
     ):
-        print("Forward!")
         assert attention_mask is None, "Non-causal attention masks are not supported yet"
         batch_size, seq_length = hidden_states.shape[:2]
         past_length = 0 if layer_past is None else layer_past[0].shape[-1]
