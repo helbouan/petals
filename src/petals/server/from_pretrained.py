@@ -55,7 +55,6 @@ def load_pretrained_block(
         block = config.block_class(config)
 
     block_prefix = f"{config.block_prefix}.{block_index}."
-    print(block_prefix)
 
     state_dict = _load_state_dict_from_repo(
         model_name,
@@ -68,8 +67,7 @@ def load_pretrained_block(
 
     # dummy load, check that keys match
     report = block.load_state_dict(state_dict, strict=False)
-    print(block)
-    assert not report.missing_keys, f"Some block weights are missing: {report.missing_keys}"
+    assert not report.missing_keys, f"Some block weights are missing: {report.missing_keys} for block {block_prefix}"
 
     for param_name, _ in block.named_parameters():
         assert param_name in state_dict, f"{param_name} not in state dict"
