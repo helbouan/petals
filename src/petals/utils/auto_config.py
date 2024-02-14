@@ -71,6 +71,7 @@ class _ORTDistributedBase:
         if proper_cls is None:
             raise ValueError(f"Petals does not have {cls.__name__} for model type {config.model_type}")
 
+        print(proper_cls)
         return proper_cls.from_pretrained(model_name_or_path, *args, **kwargs)
 
 
