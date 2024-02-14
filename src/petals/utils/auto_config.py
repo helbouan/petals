@@ -4,6 +4,7 @@ from typing import Optional, Type, Union
 
 from hivemind import get_logger
 from transformers import AutoConfig, PretrainedConfig, PreTrainedModel
+from optimum.configuration_utils import BaseConfig
 
 from petals.utils.hf_auth import always_needs_auth
 
@@ -62,7 +63,8 @@ class _ORTDistributedBase:
         ):
             kwargs["use_auth_token"] = True
 
-        config = AutoConfig.from_pretrained(model_name_or_path, *args, **kwargs)
+        config = BaseConfig.from_pretrained(model_name_or_path, *args, **kwargs)
+        print("\n\nConfig: {config}, {config.model_type}\n\n")
         if config.model_type not in _CLASS_MAPPING:
             raise ValueError(f"Petals does not support model type {config.model_type}")
 
