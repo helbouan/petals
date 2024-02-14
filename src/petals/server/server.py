@@ -32,7 +32,7 @@ from petals.server.handler import TransformerConnectionHandler
 from petals.server.memory_cache import MemoryCache
 from petals.server.reachability import ReachabilityProtocol, check_direct_reachability, validate_reachability
 from petals.server.throughput import get_dtype_name, get_server_throughput
-from petals.utils.auto_config import AutoDistributedConfig
+from petals.utils.auto_config import AutoDistributedConfig, ORTDistributedConfig
 from petals.utils.convert_block import QuantType, check_device_balance, convert_block
 from petals.utils.dht import declare_active_modules, get_remote_module_infos
 from petals.utils.misc import get_size_in_bytes
@@ -108,7 +108,11 @@ class Server:
         if custom_module_path is not None:
             add_custom_models_from_file(custom_module_path)
 
-        self.block_config = AutoDistributedConfig.from_pretrained(
+        distribtuted_config_class = AutoDistributedConfig
+        if "onnx" in converted_model_name_or_path:
+            distribtuted_config_class = ORTDistributedConfig
+
+        self.block_config = distribtuted_config_class.from_pretrained(
             converted_model_name_or_path,
             use_auth_token=token,
             revision=revision,

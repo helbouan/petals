@@ -55,6 +55,7 @@ class _ORTDistributedBase:
 
     @classmethod
     def from_pretrained(cls, model_name_or_path: Union[str, os.PathLike, None], *args, **kwargs) -> PretrainedConfig:
+        print("\n\n\n\nCalled from_pretrained in ORTDistributedConfig\n\n\n\n")
         if (
             always_needs_auth(model_name_or_path)
             and kwargs.get("token") is None
