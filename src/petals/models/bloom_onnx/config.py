@@ -10,14 +10,14 @@ from optimum.configuration_utils import BaseConfig
 from petals.client.config import ClientConfig
 from petals.client.lm_head import LMHeadConfig
 from petals.client.ptune import PTuneConfig
-from petals.models.bloom.block import WrappedBloomBlock
+from petals.models.bloom_onnx.block import WrappedONNXBloomBlock
 
 logger = get_logger(__name__)
 
 
 # class DistributedBloomONNXConfig(BloomConfig, ClientConfig, PTuneConfig, LMHeadConfig):
 class DistributedBloomONNXConfig(BaseConfig, ClientConfig, PTuneConfig, LMHeadConfig):
-    block_class = WrappedBloomBlock
+    block_class = WrappedONNXBloomBlock
     attn_class = BloomAttention
     block_prefix = "h"
 

@@ -1,4 +1,4 @@
-from petals.models.bloom_onnx.block import WrappedBloomBlock
+from petals.models.bloom_onnx.block import WrappedONNXBloomBlock
 from petals.models.bloom_onnx.config import DistributedBloomONNXConfig
 from petals.models.bloom_onnx.model import (
     DistributedBloomONNXForCausalLM,
