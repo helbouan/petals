@@ -108,11 +108,11 @@ class Server:
         if custom_module_path is not None:
             add_custom_models_from_file(custom_module_path)
 
-        distribtuted_config_class = AutoDistributedConfig
+        distributed_config_class = AutoDistributedConfig
         if "onnx" in converted_model_name_or_path:
-            distribtuted_config_class = ORTDistributedConfig
+            distributed_config_class = ORTDistributedConfig
 
-        self.block_config = distribtuted_config_class.from_pretrained(
+        self.block_config = distributed_config_class.from_pretrained(
             converted_model_name_or_path,
             use_auth_token=token,
             revision=revision,

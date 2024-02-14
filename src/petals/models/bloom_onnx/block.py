@@ -11,7 +11,7 @@ from transformers.models.bloom.modeling_bloom import BloomBlock, BloomModel, bui
 from optimum.onnxruntime import ORTModel
 
 
-class WrappedBloomBlock(BloomBlock):
+class WrappedONNXBloomBlock(BloomBlock):
     def forward(
         self,
         hidden_states: torch.Tensor,
@@ -21,6 +21,7 @@ class WrappedBloomBlock(BloomBlock):
         layer_past: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         **kwargs
     ):
+        print("\n\nWrappedONNXBloomBlock\n\n")
         assert attention_mask is None, "Non-causal attention masks are not supported yet"
         batch_size, seq_length = hidden_states.shape[:2]
         past_length = 0 if layer_past is None else layer_past[0].shape[-1]

@@ -55,7 +55,6 @@ class _ORTDistributedBase:
 
     @classmethod
     def from_pretrained(cls, model_name_or_path: Union[str, os.PathLike, None], *args, **kwargs) -> PretrainedConfig:
-        print("\n\n\n\nCalled from_pretrained in ORTDistributedConfig\n\n\n\n")
         if (
             always_needs_auth(model_name_or_path)
             and kwargs.get("token") is None
@@ -71,7 +70,6 @@ class _ORTDistributedBase:
         if proper_cls is None:
             raise ValueError(f"Petals does not have {cls.__name__} for model type {config.model_type}")
 
-        print(proper_cls)
         return proper_cls.from_pretrained(model_name_or_path, *args, **kwargs)
 
 

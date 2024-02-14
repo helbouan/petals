@@ -25,7 +25,7 @@ from transformers.utils import get_file_from_repo
 
 from petals.constants import DTYPE_MAP
 from petals.server.block_utils import resolve_block_dtype
-from petals.utils.auto_config import AutoDistributedConfig
+from petals.utils.auto_config import AutoDistributedConfig, ORTDistributedConfig
 from petals.utils.disk_cache import DEFAULT_CACHE_DIR, allow_cache_reads, allow_cache_writes, free_disk_space_for
 from petals.utils.hf_auth import always_needs_auth
 
@@ -44,7 +44,11 @@ def load_pretrained_block(
     max_disk_space: Optional[int] = None,
 ) -> nn.Module:
     if config is None:
-        config = AutoDistributedConfig.from_pretrained(model_name, use_auth_token=token)
+        distributed_config_class = AutoDistributedConfig
+        if "onnx" in model_name:
+            distributed_config_class = ORTDistributedConfig
+        print(distributed_config_class)
+        config = distributed_config_class.from_pretrained(model_name, use_auth_token=token)
     if cache_dir is None:
         cache_dir = DEFAULT_CACHE_DIR
 
@@ -235,13 +239,11 @@ def _load_state_dict_from_repo_file(
 def _load_state_dict_from_local_file(path: str, *, block_prefix: Optional[str] = None) -> StateDict:
     if path.endswith(".bin"):
         state_dict = torch.load(path, map_location="cpu")
-        print(state_dict)
         return state_dict
 
     if path.endswith(".safetensors"):
         with safetensors.safe_open(path, framework="pt", device="cpu") as f:
             state_dict = {key: f.get_tensor(key) for key in f.keys() if block_prefix is None or key.startswith(block_prefix)}
-            print(state_dict)
             return state_dict
     
     if path.endswith(".onnx"):
@@ -254,7 +256,6 @@ def _load_state_dict_from_local_file(path: str, *, block_prefix: Optional[str] =
                 key = key[12:]
             value = torch.tensor(onnx.numpy_helper.to_array(initializer))
             state_dict[key] = value
-        print(state_dict)
         return state_dict
 
     raise ValueError(f"Unknown weight format: {path}")
