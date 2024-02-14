@@ -64,7 +64,7 @@ class _ORTDistributedBase:
             kwargs["use_auth_token"] = True
 
         config = BaseConfig.from_pretrained(model_name_or_path, *args, **kwargs)
-        print("\n\nConfig: {config}, {config.model_type}\n\n")
+        print(f"\n\nConfig: {config}, {config.model_type}")
         if config.model_type not in _CLASS_MAPPING:
             raise ValueError(f"Petals does not support model type {config.model_type}")
 
