@@ -47,7 +47,6 @@ def load_pretrained_block(
         distributed_config_class = AutoDistributedConfig
         if "onnx" in model_name:
             distributed_config_class = ORTDistributedConfig
-        print(distributed_config_class)
         config = distributed_config_class.from_pretrained(model_name, use_auth_token=token)
     if cache_dir is None:
         cache_dir = DEFAULT_CACHE_DIR

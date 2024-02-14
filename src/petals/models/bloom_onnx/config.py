@@ -15,8 +15,8 @@ from petals.models.bloom_onnx.block import WrappedONNXBloomBlock
 logger = get_logger(__name__)
 
 
-# class DistributedBloomONNXConfig(BloomConfig, ClientConfig, PTuneConfig, LMHeadConfig):
-class DistributedBloomONNXConfig(BaseConfig, ClientConfig, PTuneConfig, LMHeadConfig):
+class DistributedBloomONNXConfig(BloomConfig, ClientConfig, PTuneConfig, LMHeadConfig):
+# class DistributedBloomONNXConfig(BaseConfig, ClientConfig, PTuneConfig, LMHeadConfig):
     block_class = WrappedONNXBloomBlock
     attn_class = BloomAttention
     block_prefix = "h"
