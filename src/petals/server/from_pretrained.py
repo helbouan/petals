@@ -69,6 +69,7 @@ def load_pretrained_block(
     )
 
     # dummy load, check that keys match
+    print(f"\n\nBlock: {block}\nType: {type(block)}\n\n")
     report = block.load_state_dict(state_dict, strict=False)
     assert not report.missing_keys, f"Some block weights are missing: {report.missing_keys} for block {block_prefix}"
 
