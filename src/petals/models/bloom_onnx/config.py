@@ -3,7 +3,8 @@ from typing import Optional, Union
 
 from hivemind import get_logger
 from transformers.models.bloom import BloomConfig
-from transformers.models.bloom.modeling_bloom import BloomAttention, BloomOnnxConfig
+from transformers.models.bloom.modeling_bloom import BloomAttention
+from transformers.models.bloom.configuration_bloom import BloomOnnxConfig
 
 from optimum.configuration_utils import BaseConfig
 
