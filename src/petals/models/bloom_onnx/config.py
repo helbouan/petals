@@ -1,12 +1,14 @@
 import os
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from hivemind import get_logger
+from transformers.configuration_utils import PretrainedConfig
 from transformers.models.bloom import BloomConfig
-from transformers.models.bloom.modeling_bloom import BloomAttention
+from transformers.models.bloom.modeling_bloom import BloomAttention, BloomConfig
 from transformers.models.bloom.configuration_bloom import BloomOnnxConfig
 
 from optimum.configuration_utils import BaseConfig
+from transformers.onnx import PatchingSpec
 
 from petals.client.config import ClientConfig
 from petals.client.lm_head import LMHeadConfig
@@ -15,8 +17,30 @@ from petals.models.bloom_onnx.block import WrappedONNXBloomBlock
 
 logger = get_logger(__name__)
 
+class WrappedBloomOnnxConfig(BloomConfig, BloomOnnxConfig):
+    def __init__(
+        self,
+        vocab_size=250880,
+        hidden_size=64,
+        n_layer=2,
+        n_head=8,
+        layer_norm_epsilon=1e-5,
+        initializer_range=0.02,
+        use_cache=True,
+        bos_token_id=1,
+        eos_token_id=2,
+        apply_residual_connection_post_layernorm=False,
+        hidden_dropout=0.0,
+        attention_dropout=0.0,
+        pretraining_tp=1,  # TP rank used when training with megatron
+        slow_but_exact=False,
+        **kwargs,
+    ):
+        super(BloomConfig, self).__init__(vocab_size, hidden_size, n_layer, n_head, layer_norm_epsilon, initializer_range, use_cache, bos_token_id, eos_token_id,
+                                          apply_residual_connection_post_layernorm, hidden_dropout, attention_dropout, pretraining_tp, slow_but_exact, kwargs)
+        super(BloomOnnxConfig, self).__init__(self)
 
-class DistributedBloomONNXConfig(BloomOnnxConfig, ClientConfig, PTuneConfig, LMHeadConfig):
+class DistributedBloomONNXConfig(WrappedBloomOnnxConfig, ClientConfig, PTuneConfig, LMHeadConfig):
 # class DistributedBloomONNXConfig(BaseConfig, ClientConfig, PTuneConfig, LMHeadConfig):
     block_class = WrappedONNXBloomBlock
     attn_class = BloomAttention
