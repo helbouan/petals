@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 from hivemind import get_logger
 from transformers.models.bloom import BloomConfig
-from transformers.models.bloom.modeling_bloom import BloomAttention
+from transformers.models.bloom.modeling_bloom import BloomAttention, BloomOnnxConfig
 
 from optimum.configuration_utils import BaseConfig
 
@@ -15,7 +15,7 @@ from petals.models.bloom_onnx.block import WrappedONNXBloomBlock
 logger = get_logger(__name__)
 
 
-class DistributedBloomONNXConfig(BloomConfig, ClientConfig, PTuneConfig, LMHeadConfig):
+class DistributedBloomONNXConfig(BloomOnnxConfig, ClientConfig, PTuneConfig, LMHeadConfig):
 # class DistributedBloomONNXConfig(BaseConfig, ClientConfig, PTuneConfig, LMHeadConfig):
     block_class = WrappedONNXBloomBlock
     attn_class = BloomAttention
