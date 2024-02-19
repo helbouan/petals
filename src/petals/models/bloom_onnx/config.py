@@ -36,9 +36,9 @@ class WrappedBloomOnnxConfig(BloomConfig, BloomOnnxConfig):
         slow_but_exact=False,
         **kwargs,
     ):
-        super(BloomConfig, self).__init__(vocab_size, hidden_size, n_layer, n_head, layer_norm_epsilon, initializer_range, use_cache, bos_token_id, eos_token_id,
+        super().__init__(vocab_size, hidden_size, n_layer, n_head, layer_norm_epsilon, initializer_range, use_cache, bos_token_id, eos_token_id,
                                           apply_residual_connection_post_layernorm, hidden_dropout, attention_dropout, pretraining_tp, slow_but_exact, kwargs)
-        super(BloomOnnxConfig, self).__init__(self)
+        super(BloomConfig, self).__init__(self)
 
 class DistributedBloomONNXConfig(WrappedBloomOnnxConfig, ClientConfig, PTuneConfig, LMHeadConfig):
 # class DistributedBloomONNXConfig(BaseConfig, ClientConfig, PTuneConfig, LMHeadConfig):
